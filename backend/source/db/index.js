@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { DB_NAME } from "../source/constants.js"; // Adjust the path as necessary
+import { DB_NAME } from "../constants.js"; // Adjust the path as necessary
 
 const connectDB = async () => {
     try {

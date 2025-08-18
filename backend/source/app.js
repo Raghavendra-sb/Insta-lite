@@ -1,9 +1,39 @@
+// This file is the main entry point for the Express application.
 import express from "express";
-//the funciton of theis file is to create an Express application
-//Express is a web framework for Node.js that simplifies the process of building web applications
+import router from "./routes/user.route.js";
+import cookieParser from "cookie-parser"; 
+import dotenv from "dotenv"; 
+import connectDB from './db/index.js'; // Assuming you have a file to connect to the DB
+
+// Load environment variables from a .env file.
+dotenv.config({
+    path: './.env'
+});
+
 const app = express();
 
-app.get("/", (req, res) => {//app.get is used to define a route for GET requests
+// Middleware to parse incoming JSON requests.
+app.use(express.json({ limit: "16kb" }));
+
+// Middleware to parse URL-encoded data.
+app.use(express.urlencoded({ extended: true, limit: "16kb" }));
+
+// Middleware to serve static files.
+app.use(express.static("public"));
+
+// Middleware to parse cookies.
+app.use(cookieParser());
+
+// Connect to the database.
+// This function call should be placed here to ensure the connection is established when the app starts.
+connectDB();
+
+// Mount the user routes on the /api/users path.
+// This must be done before exporting the app.
+app.use("/api/users", router); 
+
+// A simple root route for testing.
+app.get("/", (req, res) => {
     res.send("Hello World");
 });
 
