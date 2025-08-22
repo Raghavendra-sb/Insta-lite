@@ -20,3 +20,12 @@ connectDB()
 .catch((error)=>{
  console.error(`Mongo db connection failed :${error}`)
 })
+
+
+// index.js (or sometimes server.js)
+
+// Usually serves as the entry point of your application.
+
+// Its main job is to start the server and maybe load environment variables.
+
+// Keeps things minimal, so your app structure is clean.

@@ -30,7 +30,9 @@ connectDB();
 
 // Mount the user routes on the /api/users path.
 // This must be done before exporting the app.
-app.use("/api/users", router); 
+app.use("/api/users", router);   //So basically, app.use("/api/users", router) says:
+
+//“Hey Express, any request that starts with /api/users should be handled by this router module.”
 
 // A simple root route for testing.
 app.get("/", (req, res) => {
