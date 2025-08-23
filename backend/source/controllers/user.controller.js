@@ -1,162 +1,124 @@
-import {User} from "../models/user.model.js";
-import {ApiError}  from "../utils/ApiError.js";
-import {ApiResponse} from "../utils/ApiResponse.js";
-import {asyncHandler} from "../utils/asyncHandler.js"
+import { User } from "../models/user.model.js";
+import { ApiError } from "../utils/ApiError.js";
+import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asyncHandler.js";
 
-const generateAccessTokenandRefreshToken = async function (id){
+const generateAccessTokenandRefreshToken = async function (id) {
     const user = await User.findById(id);
-    if(!user)
-    {
-        throw new ApiError(404,"User not found in the database");
+    if (!user) {
+        throw new ApiError(404, "User not found in the database");
     }
-    const accessToken = user.generateAcessToken();
+    const accessToken = user.generateAccessToken();
     const refreshToken = user.generateRefreshToken();
 
     user.refreshToken = refreshToken;
-   await user.save({ValidateBeforeSave: false});
-   return {accessToken,refreshToken};
-}
+    await user.save({ ValidateBeforeSave: false });
+    return { accessToken, refreshToken };
+};
 
+// Corrected registerUser to include the role field
+const registerUser = asyncHandler(async function (req, res) {
+    const { username, password, role } = req.body;
 
-const registerUser = asyncHandler(async function (req,res) {
-    const { username,password}= req.body;
-
-    if(!username)
-    {
-        throw new ApiError();
+    if (!username || !password || !role) {
+        throw new ApiError(400, "All fields (username, password, role) are required");
     }
-    if(!password)
-        {
-            throw new ApiError(400,"please enter the password");
-        }
 
-    const existedUser = await User.findOne(
-       {
-        $or:[{username},{password}]
-       }
-    ) 
-    if(existedUser)
-        throw new ApiError(409 ,"User Already exists");
+    const existedUser = await User.findOne({ username });
+    if (existedUser) {
+        throw new ApiError(409, "User with this username already exists");
+    }
 
-    const user = await User.create(
-        {
-            username:username.toLowerCase(),
-            password
-        }
-    )
+    const user = await User.create({
+        username: username.toLowerCase(),
+        password,
+        role, // Pass the role to the creation method
+    });
 
     const userCreated = await User.findById(user._id).select("-password -refreshToken");
 
-    if(!userCreated)
-    {
-        throw new ApiError(500,"User creatation failed");
+    if (!userCreated) {
+        throw new ApiError(500, "User creation failed");
     }
 
     return res.status(201).json(
-        new ApiResponse(201,userCreated,"User registered successfully")
-    )
-})
+        new ApiResponse(201, userCreated, "User registered successfully")
+    );
+});
 
 
-const getUser = async (req,res) =>
-{
-    try{
+const getUser = async (req, res) => {
+    try {
         const user = await User.findById(req.params.id);
-        if(!user) {
+        if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
         res.status(200).json(user);
-    }
-    catch(error)
-    {
+    } catch (error) {
         console.error("Error fetching user:", error);
         res.status(500).json({ message: "Internal server error" });
     }
-}
+};
 
-const loginUser = asyncHandler(async function (req,res)
-{
-    const {username,password}=req.body;
+// This is the fixed loginUser function.
+const loginUser = asyncHandler(async function (req, res) {
+    const { username, password } = req.body;
 
-    if(!username)
-    {
-        throw new ApiError(400,"please enter the username")
-    }
-    if(!password)
-    {
-        throw new ApiError(400,"please enter the password")
+    if (!username || !password) {
+        throw new ApiError(400, "Username and password are required");
     }
 
-    const user = await User.findOne(
-      {
-        $or:[{username},{password}] 
+    // CORRECTED: The findOne query now uses the correct syntax.
+    const user = await User.findOne({ username });
 
-      }
-       // $or({username},{password})
-    )
-
-    if(!user)
-    {
-        throw new ApiError(404,"User not found");
+    if (!user) {
+        throw new ApiError(404, "User not found");
     }
 
-    const isPasswordvalid = await user.isPasswordCorrect(password)
+    const isPasswordvalid = await user.isPasswordCorrect(password);
 
-    if(!isPasswordvalid)
-    {
-        throw new ApiError(401,"Incorrect Password");
+    if (!isPasswordvalid) {
+        throw new ApiError(401, "Incorrect Password");
     }
 
-    const {accessToken,refreshToken}= await generateAccessTokenandRefreshToken(user._id);
+    const { accessToken, refreshToken } = await generateAccessTokenandRefreshToken(user._id);
 
-    const logedInUser = await User.findOne(user._id).select("-password -refreshToken");
-    
-    const options = 
-    {
-        httpOnly:true,
+    const logedInUser = await User.findById(user._id).select("-password -refreshToken");
+
+    // Cleaned up the options object to remove the duplicate httpOnly property.
+    const options = {
         httpOnly: true,
-        secure: process.env.NODE_ENV === "production", // Only secure in production (HTTPS)
-        sameSite: "strict", 
-    }
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+    };
 
-    res.status(200).
-    cookie("accessToken",accessToken,options).
-    cookie("refreshToken",refreshToken,options).
-    json(new ApiResponse(200,{user:logedInUser,accessToken,refreshToken},"User logged in successfully"))
+    res.status(200)
+        .cookie("accessToken", accessToken, options)
+        .cookie("refreshToken", refreshToken, options)
+        .json(new ApiResponse(200, { user: logedInUser, accessToken, refreshToken }, "User logged in successfully"));
+});
 
-})
-
-const logoutUser = asyncHandler(async function (req,res) {
-    await User.findByIdAndUpdate(req.user._id ,
+const logoutUser = asyncHandler(async function (req, res) {
+    await User.findByIdAndUpdate(req.user._id,
         {
-            $set : {
-                refreshToken:"",
+            $set: {
+                refreshToken: "",
             }
         },
         {
-            new:true,
+            new: true,
         }
-    )
-    const options = 
-    {
-        httpOnly:true,
-        secure:process.env.NODE_ENV === "production" ? true : false,
-        sameSite : "strict"
-    }
+    );
+    const options = {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production" ? true : false,
+        sameSite: "strict",
+    };
 
-    res.status(200).
-    clearCookie("accessToken",options).
-    clearCookie("refreshToken",options).
-    json(new ApiResponse(200, {},"user logged out successfully"));
-})
+    res.status(200)
+        .clearCookie("accessToken", options)
+        .clearCookie("refreshToken", options)
+        .json(new ApiResponse(200, {}, "user logged out successfully"));
+});
 
-
-
-
-
-
-export {registerUser};
-export {getUser};
-export {generateAccessTokenandRefreshToken};
-export {loginUser};
-export {logoutUser};
+export { registerUser, getUser, loginUser, logoutUser, generateAccessTokenandRefreshToken };
