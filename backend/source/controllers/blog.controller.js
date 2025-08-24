@@ -30,7 +30,7 @@ const createBlog = asyncHandler ( async (req,res) => {
 
     return res.
     status(200).
-    json(ApiResponse(201,blog,"Blog created successfully"));
+    json(new ApiResponse(201,blog,"Blog created successfully"));
 
 })
 
@@ -45,7 +45,7 @@ const getBlogs = asyncHandler(async (req,res) => {
         throw new ApiError(500,"failed to fetch the blogs from the database");
     }
 
-    return res.status(200).json(ApiResponse(
+    return res.status(200).json(new ApiResponse(
         200,
         blogs,
         "Successfully fetched all blogs for the authenticated user"
@@ -66,7 +66,7 @@ const getBlogById = asyncHandler(async (req,res) => {
         throw new ApiError(403, "You are not authorized to view this blog post");
     }
 
-    return res.status(200).json(ApiResponse(200,blog,"Blog post fetched successfully."));
+    return res.status(200).json(new ApiResponse(200,blog,"Blog post fetched successfully."));
 
 })
 
