@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import { uploadFileCloudinary } from "../utils/Cloudinary.js";
 
 const generateAccessTokenandRefreshToken = async function (id) {
     const user = await User.findById(id);
@@ -24,13 +25,36 @@ const registerUser = asyncHandler(async function (req, res) {
         throw new ApiError(400, "All fields (username, password, role) are required");
     }
 
+
+
     const existedUser = await User.findOne({ username });
     if (existedUser) {
         throw new ApiError(409, "User with this username already exists");
     }
 
+    const avatarLocalPath = req.files?.avatar[0]?.path;
+    if(!avatarLocalPath){
+        throw new ApiError(400,"Avatar is a reqired field");
+    }
+
+    let coverImageLocalPath;
+    if(req.files && Array.isArray(req.files.cover) && req.files.cover.length > 0)
+    {
+        coverImageLocalPath = req.files.cover[0]?.path;
+    }
+
+    const avatar = await uploadFileCloudinary(avatarLocalPath);
+    const cover = await uploadFileCloudinary(coverImageLocalPath);
+
+    if(!avatar)
+    {
+        throw new ApiError(400,"Failed to upload to cloudinary");
+    }
+
     const user = await User.create({
         username: username.toLowerCase(),
+        avatar : avatar.url,
+        coverImage : cover?.url || "",
         password,
         role, // Pass the role to the creation method
     });

@@ -22,6 +22,17 @@ const userSchema = new mongoose.Schema({
     role: {
         type: String,
         required: true // Ensures a role is always provided.
+    },
+    avatar:
+    {
+            
+        type: String,//cloudinary URL
+        required: true,
+            
+    },
+    coverImage:
+    {
+        type: String,//cloudinary URL
     }
 }, { timestamps: true });
 
