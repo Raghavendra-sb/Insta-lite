@@ -16,6 +16,7 @@ const blogSchema = new mongoose.Schema(
         },
         tags :
         [String],
+
         author : 
         {
             type : mongoose.Schema.Types.ObjectId,
@@ -25,9 +26,31 @@ const blogSchema = new mongoose.Schema(
         pictures:
         [{
             type : String
-        }]
-    }
-    ,{timestamps:true})
+        }],
+        likesCount : {
+            type : Number,
+            default : 0
+        },
+        likedBy :
+        [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref : "User"
+        }],
+        commentsCount : {
+            type : Number,
+            default : 0
+        },
+        comments:[
+            {
+                type : mongoose.Schema.Types.ObjectId,
+                ref : "Comment"
+            }
+        ]
+
+    },
+
+
+    {timestamps:true})
 
 
     export const Blog = mongoose.model("Blog",blogSchema);

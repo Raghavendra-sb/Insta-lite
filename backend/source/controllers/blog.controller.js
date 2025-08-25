@@ -156,6 +156,49 @@ const deleteBlog = asyncHandler(async (req,res) => {
 
 })
 
+const toggleLike = asyncHandler(async (req,res) => {
+
+    //get blog id
+    //get auth user info through the req object
+    //get the blog useing id from db
+    //check if the user alredy liked the blog
+    //if he already liked the blog decreased the like count 
+    //or else increase the like value
+    //save the updated changes in the db
+    //return response
+
+
+        const {id} = req.params;
+
+       const userId = req.user._id;
+
+       const blog = await Blog.findById(id);
+
+       if(!blog)
+       {
+        throw new ApiError(404,"Blog with this id not found in the database");
+       }
+
+       const hasLiked = blog.likedBy.includes(userId);
+
+       if(hasLiked)
+       {
+        blog.likedBy.pull(userId);
+        blog.likesCount--;
+       }
+       else
+       {
+        blog.likedBy.push(userId);
+        blog.likesCount++;
+       }
+
+       await blog.save();
+
+       return res.status(200).json(new ApiResponse(200,{},"Liked toggeled successully"))
+
+
+})
+
 
 
 
@@ -165,3 +208,4 @@ export {createBlog};
 export {getBlogs};
 export {updateBlog};
 export {deleteBlog};
+export {toggleLike};

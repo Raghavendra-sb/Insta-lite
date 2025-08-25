@@ -34,6 +34,7 @@ const userSchema = new mongoose.Schema({
     {
         type: String,//cloudinary URL
     }
+    
 }, { timestamps: true });
 
 // Middleware to hash the password before saving a new user or updating the password
