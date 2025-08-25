@@ -2,6 +2,7 @@ import {Blog} from "../models/blog.model.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { uploadFileCloudinary } from "../utils/Cloudinary.js";
 
 const createBlog = asyncHandler ( async (req,res) => {
     const {title,content,coverImage,tags } = req.body;
@@ -13,15 +14,39 @@ const createBlog = asyncHandler ( async (req,res) => {
         throw new ApiError (400,"Title and content are required fileds");
      }
 
-     const blog = await Blog.create(
-        {
-            title,
-            content,
-            coverImage,
-            tags,
-            author,
-       }
-     );
+  // Step 1: Collect local paths for the picture files
+    let picturesLocalPaths = [];
+    if (req.files && Array.isArray(req.files.pictures) && req.files.pictures.length > 0) {
+        console.log(req.files.pictures);
+        picturesLocalPaths = req.files.pictures.map(file => file.path);
+    } else {
+        // If no pictures were uploaded, we can still proceed
+        picturesLocalPaths = [];
+    }
+    
+    // Step 2: Upload all picture files to Cloudinary concurrently
+    // We use Promise.all to handle multiple asynchronous operations in parallel
+    // and wait for all of them to complete.
+    const uploadPromises = picturesLocalPaths.map(path => uploadFileCloudinary(path));
+    const cloudinaryUploadResults = await Promise.all(uploadPromises);
+
+    // Filter out any failed uploads (where the result is null)
+    const uploadedPictures = cloudinaryUploadResults.filter(result => result !== null);
+
+    // Step 3: Extract the secure URLs from the successful uploads
+    const picturesCloudinaryUrls = uploadedPictures.map(result => result.secure_url);
+
+    // Step 4: Create the new blog post document
+    const blog = await Blog.create({
+        title,
+        content,
+        // Assuming coverImage is a URL or is handled separately.
+        // If it's a local file, you'd need to upload it here as well.
+        coverImage, 
+        tags,
+        author,
+        pictures: picturesCloudinaryUrls // Assign the array of Cloudinary URLs to the pictures field
+    });
 
      if(!blog)
      {
@@ -33,7 +58,6 @@ const createBlog = asyncHandler ( async (req,res) => {
     json(new ApiResponse(201,blog,"Blog created successfully"));
 
 })
-
 
 const getBlogs = asyncHandler(async (req,res) => {
     const author = req.user._id;
