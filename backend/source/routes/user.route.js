@@ -7,7 +7,7 @@ const router = Router();
 
 // Route to create a new user
 router.route("/register").post(//is upload is the middleware for hnagling file upload provide by multer,
-    upload.fields(//for multiple file upload
+    upload.fields([//for multiple file upload
         {
              name:"avatar",//name of the field in the form data
              maxCount:1
@@ -17,7 +17,7 @@ router.route("/register").post(//is upload is the middleware for hnagling file u
             name:"cover",
             maxCount:1 
         }
-    ),
+    ]),
     registerUser);
 // Route to get a user by ID
 router.route("/:id").get(getUser);
