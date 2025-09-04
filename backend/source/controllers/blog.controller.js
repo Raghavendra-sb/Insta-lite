@@ -168,11 +168,11 @@ const toggleLike = asyncHandler(async (req,res) => {
     //return response
 
 
-        const {id} = req.params;
+        const {blogId} = req.params;
 
        const userId = req.user._id;
 
-       const blog = await Blog.findById(id);
+       const blog = await Blog.findById(blogId);
 
        if(!blog)
        {
