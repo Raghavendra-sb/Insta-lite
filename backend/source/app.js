@@ -4,11 +4,17 @@ import blogRoutes from "./routes/blog.route.js";
 import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
+import cors from "cors";
 
 // Load environment variables
 dotenv.config({ path: "./.env" });
 
 const app = express();
+
+app.use(cors({
+    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // IMPORTANT: Specify your frontend URL
+    credentials: true // Allow cookies to be sent
+}));
 
 // Middleware
 app.use(express.json({ limit: "16kb" }));
