@@ -6,7 +6,7 @@ const Footer = () => {
       <div className="container mx-auto text-center">
         <p>&copy; {new Date().getFullYear()} My Blog App. All rights reserved.</p>
         <p className="text-sm mt-2">
-          Built with React, Tailwind CSS, and powered by your amazing backend.
+         Contact: Raghavendra S B
         </p>
       </div>
     </footer>
