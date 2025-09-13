@@ -59,22 +59,24 @@ const createBlog = asyncHandler ( async (req,res) => {
 
 })
 
-const getBlogs = asyncHandler(async (req,res) => {
+// Corrected backend route for fetching user's blogs
+const getBlogs = asyncHandler(async (req, res) => {
+    // 1. Get the author's ID from the authenticated user
     const author = req.user._id;
 
-    const blogs = await Blog.find({author});
+    // 2. Find all blogs where the author matches the authenticated user
+    const blogs = await Blog.find({ author }).sort({ createdAt: -1 });
 
-    if(!blogs)
-    {
-        throw new ApiError(500,"failed to fetch the blogs from the database");
-    }
-
-    return res.status(200).json(new ApiResponse(
-        200,
-        blogs,
-        "Successfully fetched all blogs for the authenticated user"
-    ));
-})
+    // 3. Return the blogs. Mongoose will return an empty array if no blogs are found,
+    // which is the correct and expected behavior.
+    return res.status(200).json(
+        new ApiResponse(
+            200,
+            blogs,
+            "Successfully fetched all blogs for the authenticated user"
+        )
+    );
+});
 
 const getBlogById = asyncHandler(async (req,res) => {
     const {id}= req.params;

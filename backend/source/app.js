@@ -12,7 +12,7 @@ dotenv.config({ path: "./.env" });
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'http://localhost:5173', // IMPORTANT: Specify your frontend URL
+    origin: process.env.CORS_ORIGIN || 'https://insta-lite-4unc.onrender.com', // IMPORTANT: Specify your frontend URL
     credentials: true // Allow cookies to be sent
 }));
 

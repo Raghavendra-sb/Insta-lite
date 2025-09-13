@@ -1,18 +1,16 @@
 import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext'; // Import ThemeContext
 import Button from './button.jsx';
 import { toast } from 'react-toastify';
-import { MoonIcon, SunIcon } from '@heroicons/react/24/solid'; // Example icons
+import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 
 const Navbar = () => {
   const { user, logout } = useContext(AuthContext);
+  const { theme, toggleTheme } = useContext(ThemeContext); // Use the global context
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(
-    localStorage.getItem('theme') === 'dark' ||
-    (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)
-  );
 
   const handleLogout = async () => {
     try {
@@ -22,18 +20,6 @@ const Navbar = () => {
     } catch (error) {
       toast.error('Failed to log out.');
       console.error('Logout error:', error);
-    }
-  };
-
-  const toggleDarkMode = () => {
-    const newMode = !isDarkMode;
-    setIsDarkMode(newMode);
-    if (newMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
     }
   };
 
@@ -63,10 +49,12 @@ const Navbar = () => {
                 <li><Link to="/dashboard" className="block hover:text-indigo-300 transition-colors duration-200">Dashboard</Link></li>
               </>
             )}
-            
+
             <li>
-              <button onClick={toggleDarkMode} className="p-2 rounded-full hover:bg-gray-700 dark:hover:bg-gray-800 transition-colors duration-200">
-                {isDarkMode ? <SunIcon className="h-5 w-5 text-yellow-400" /> : <MoonIcon className="h-5 w-5 text-gray-300" />}
+              {/* Use the global toggleTheme function */}
+              <button onClick={toggleTheme} className="p-2 rounded-full hover:bg-gray-700 dark:hover:bg-gray-800 transition-colors duration-200">
+                {/* Use the global theme state to choose the icon */}
+                {theme === 'dark' ? <SunIcon className="h-5 w-5 text-yellow-400" /> : <MoonIcon className="h-5 w-5 text-gray-300" />}
               </button>
             </li>
 

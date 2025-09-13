@@ -13,6 +13,7 @@ import DashboardPage from './pages/DashboardPage';
 import PrivateRoute from './components/PrivateRoute';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { BlogProvider } from './context/BlogContext.jsx';
+import { ThemeProvider } from './context/ThemeContext.jsx';
 
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -20,11 +21,14 @@ import 'react-toastify/dist/ReactToastify.css';
 function App() {
   return (
     <Router>
+       <ThemeProvider>
       <AuthProvider>
+       
         <BlogProvider>
-          <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
-            <Navbar />
-            <main className="flex-grow container mx-auto p-4">
+         
+           <div className="flex flex-col min-h-screen">
+                    <Navbar />
+                        <main className="flex-grow container mx-auto p-4">
               <Routes>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/blogs" element={<BlogListPage />} />
@@ -44,7 +48,9 @@ function App() {
             <ToastContainer position="bottom-right" autoClose={3000} hideProgressBar={false} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover theme="colored" />
           </div>
         </BlogProvider>
+       
       </AuthProvider>
+       </ThemeProvider>
     </Router>
   );
 }
