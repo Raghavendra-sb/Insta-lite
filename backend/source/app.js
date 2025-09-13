@@ -13,9 +13,7 @@ const app = express();
 
 app.use(cors({
     origin: [
-        'https://insta-lite-1.onrender.com', // Your backend's URL
-        'http://localhost:5173',             // Your local frontend URL
-        'https://insta-lite-2.onrender.com'  // Your new deployed frontend URL
+        'http://localhost:5173'
     ],
     credentials: true,
 }));
