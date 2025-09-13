@@ -69,17 +69,21 @@ const RegisterPage = () => {
               required
             />
           </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
-            <input
-              type="password"
-              id="password"
-              className="mt-1 block w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-gray-200"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
+        <div>
+  <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+  <input
+    type="password"
+    id="password"
+    className="mt-1 block w-full p-3 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    required
+    minLength="8" 
+  />
+  {password.length > 0 && password.length < 8 && (
+    <p className="mt-2 text-sm text-red-600 dark:text-red-400">Password must be at least 8 characters long.</p>
+  )}
+</div>
           <div>
             <label htmlFor="role" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Role</label>
             <select
