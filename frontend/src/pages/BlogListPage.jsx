@@ -2,7 +2,7 @@ import React, { useEffect, useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { BlogContext } from '../context/BlogContext';
 import Card from '../components/Card';
-import Button from '../components/button';
+import Button from '../components/Button.jsx';
 import { HeartIcon, ChatBubbleLeftIcon } from '@heroicons/react/24/outline'; // Outline icons
 
 const BlogListPage = () => {

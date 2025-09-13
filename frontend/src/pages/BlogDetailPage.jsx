@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { BlogContext } from '../context/BlogContext';
 import { AuthContext } from '../context/AuthContext';
-import Button from '../components/button';
+import Button from '../components/Button.jsx';
 import Card from '../components/Card.jsx';
 import { toggleLike, createComment } from '../api/blogs';
 import { toast } from 'react-toastify';

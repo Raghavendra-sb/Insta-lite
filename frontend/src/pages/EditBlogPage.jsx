@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BlogContext } from '../context/BlogContext';
-import Button from '../components/button';
+import Button from '../components/Button.jsx';
 import Card from '../components/Card';
 import { toast } from 'react-toastify';
 

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { BlogContext } from '../context/BlogContext';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
-import Button from '../components/button';
+import Button from '../components/Button.jsx';
 import Card from '../components/Card';
 import Modal from '../components/Model';
 import { PencilIcon, TrashIcon } from '@heroicons/react/24/outline'; // Outline icons

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import Button from '../components/button';
+import Button from '../components/Button.jsx';
 import Card from '../components/Card';
 import { toast } from 'react-toastify';
 

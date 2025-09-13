@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Button from './button.jsx';
+import Button from './Button.jsx';
 
 const Modal = ({ isOpen, onClose, title, children, onSubmit, submitText = "Confirm" }) => {
   if (!isOpen) return null;

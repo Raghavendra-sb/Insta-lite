@@ -2,7 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import { ThemeContext } from '../context/ThemeContext'; // Import ThemeContext
-import Button from './button.jsx';
+import Button from './Button.jsx';
 import { toast } from 'react-toastify';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 
