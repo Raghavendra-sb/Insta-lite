@@ -5,6 +5,14 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import cors from "cors";
+import fs from 'fs';
+import path from 'path';
+
+const tempDir = path.join(process.cwd(), 'public/temp');
+if (!fs.existsSync(tempDir)) {
+    fs.mkdirSync(tempDir, { recursive: true });
+}
+
 
 // Load environment variables
 dotenv.config({ path: "./.env" });
