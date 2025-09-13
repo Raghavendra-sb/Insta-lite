@@ -12,10 +12,12 @@ dotenv.config({ path: "./.env" });
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || 'https://insta-lite-4unc.onrender.com', // IMPORTANT: Specify your frontend URL
-    credentials: true // Allow cookies to be sent
+    origin: [
+        'https://ista-lite-1.onrender.com', // Your deployed frontend URL
+        'http://localhost:5173'             // Your local frontend URL
+    ],
+    credentials: true, // This is crucial for sending cookies
 }));
-
 // Middleware
 app.use(express.json({ limit: "16kb" }));
 app.use(express.urlencoded({ extended: true, limit: "16kb" }));
